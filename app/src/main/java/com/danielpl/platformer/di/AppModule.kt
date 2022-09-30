@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
+import com.danielpl.platformer.Game
 import com.danielpl.platformer.local.HighScoreDatabase
 import com.danielpl.platformer.preferences.DefaultPreferences
 import com.danielpl.platformer.preferences.Preferences
@@ -12,6 +13,9 @@ import com.danielpl.platformer.repository.HighScoreRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.internal.Contexts
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -53,6 +57,8 @@ object AppModule {
             dao = db.dao
         )
     }
+
+
 
 
 }

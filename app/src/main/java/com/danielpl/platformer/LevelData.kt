@@ -1,10 +1,8 @@
 package com.danielpl.platformer
 
 import android.util.SparseArray
+import com.danielpl.platformer.util.Config.NULLSPRITE
 
-internal const val PLAYER = "lightblue_left1"
-internal const val NULLSPRITE = "nullsprite"
-internal const val NO_TILE = 0
 
 abstract class LevelData {
     var tiles: Array<IntArray> = emptyArray()

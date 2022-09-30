@@ -23,13 +23,18 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var repository: HighScoreRepository
 
+    lateinit var game: Game
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        game = Game(this)
+        setContentView(game)
     }
 
     override fun onResume() {
         super.onResume()
+        game.resume()
         // Old way of getting longestDistance
         // val longestDistance = preferences.getLongestDistance()
         //val highScore = findViewById<TextView>(R.id.highscore)
@@ -51,5 +56,10 @@ class MainActivity : AppCompatActivity() {
 
          */
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        game.pause()
     }
 }

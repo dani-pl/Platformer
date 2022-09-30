@@ -13,7 +13,7 @@ object Config {
     const val ACCELERATION = 1.1f
     const val MIN_VEL = 0.1f
     const val MAX_VEL = 20f
-    const val GRAVITY = 1.1f
+    const val GRAVITY = 40f
     const val LIFT = -(GRAVITY * 2f)
     const val DRAG = 0.97f
     const val PLAYER_STARTING_HEALTH = 3
@@ -35,6 +35,14 @@ object Config {
     const val RAD_MIN = 10
     const val TEXT_SIZE = 48f
     const val MARGIN = 10f
+    const val PLAYER = "lightblue_left1"
+    const val NULLSPRITE = "nullsprite"
+    const val NO_TILE = 0
+    const val PIXELS_PER_METER = 50
+    const val METERS_TO_SHOW_X = 20f
+    const val METERS_TO_SHOW_Y = 0f
+    const val NANOS_TO_SECOND = 1.0f/ 1000000000f
+    const val MAX_DELTA = 0.48f
 
 
     val RNG = Random(uptimeMillis())

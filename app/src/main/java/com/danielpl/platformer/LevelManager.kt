@@ -1,8 +1,15 @@
 package com.danielpl.platformer
 
+import com.danielpl.platformer.entity.DynamicEntity
 import com.danielpl.platformer.entity.Entity
+import com.danielpl.platformer.entity.StaticEntity
+import com.danielpl.platformer.entity.isColliding
+import com.danielpl.platformer.util.Config.NO_TILE
+import com.danielpl.platformer.util.Config.PLAYER
 
 class LevelManager(level: LevelData) {
+    var levelHeight = 0
+    lateinit var player: DynamicEntity
     val entities = ArrayList<Entity>()
     val entitiesToAdd = ArrayList<Entity>()
     val entitiesToRemove = ArrayList<Entity>()
@@ -15,12 +22,22 @@ class LevelManager(level: LevelData) {
         for (e in entities) {
             e.update(dt)
         }
-        // check collisions
+        doCollisionsChecks()
+
         addAndRemoveEntities()
     }
 
+    private fun doCollisionsChecks() {
+        for(e in entities){
+            if(isColliding(player,e)){
+                player.onCollision(e)
+                e.onCollision(player)
+            }
+        }
+    }
+
     private fun loadAssets(level: LevelData) {
-        val levelHeight = level.getLevelHeight()
+        levelHeight = level.getLevelHeight()
         for (y in 0 until levelHeight) {
             val row = level.getRow(y)
             for (x in row.indices) {
@@ -30,14 +47,15 @@ class LevelManager(level: LevelData) {
                 createEntity(spriteName, x, y)
             }
         }
+        addAndRemoveEntities()
     }
 
     private fun createEntity(spriteName: String, x: Int, y: Int) {
-        addEntity(StaticEntity(spriteName, x.toFloat(), y.toFloat()))
         if (spriteName.equals(PLAYER, ignoreCase = true)) {
-            //addEntity(Player())
+            player = DynamicEntity(spriteName, x.toFloat(), y.toFloat())
+            addEntity(player)
         } else {
-            //addEntity(StaticEntity())
+            addEntity(StaticEntity(spriteName, x.toFloat(), y.toFloat()))
         }
     }
 

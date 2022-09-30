@@ -1,7 +1,9 @@
 package com.danielpl.platformer.entity
 
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.PointF
 import android.util.Log
 import com.danielpl.platformer.R
 import com.danielpl.platformer.util.MovementShapes
@@ -11,8 +13,6 @@ abstract class Entity {
     var y = 0f
     var width = 0f
     var height = 0f
-    var velX = 0f
-    var velY = 0f
     var heightModifier = 0f
     var velXModifier = 0.25f
     var movementShape = MovementShapes.STRAIGHT
@@ -22,7 +22,7 @@ abstract class Entity {
     }
 
     open fun update(dt: Float) {}
-    open fun render(canvas: Canvas, paint: Paint) {}
+    open fun render(canvas: Canvas, transfrom: Matrix, paint: Paint) {}
     open fun onCollision(that: Entity) {} //notify the Entity about collisions
     open fun destroy() {}
     open fun respawn() {}
@@ -61,3 +61,39 @@ abstract class Entity {
 fun isColliding(a: Entity, b: Entity): Boolean {
     return !(a.right() <= b.left() || b.right() <= a.left() || a.bottom() <= b.top() || b.bottom() <= a.top())
 }
+
+
+//a more refined AABB intersection test
+//returns true on intersection, and sets the least intersecting axis in overlap
+val overlap = PointF(0f, 0f); //re-usable PointF for collision detection. Assumes single threading.
+
+@SuppressWarnings("UnusedReturnValue")
+fun getOverlap(a: Entity, b: Entity, overlap: PointF): Boolean {
+    overlap.x = 0.0f;
+    overlap.y = 0.0f;
+    val centerDeltaX = a.centerX() - b.centerX();
+    val halfWidths = (a.width + b.width) * 0.5f;
+    var dx = Math.abs(centerDeltaX); //cache the abs, we need it twice
+
+    if (dx > halfWidths) return false; //no overlap on x == no collision
+
+    val centerDeltaY = a.centerY() - b.centerY();
+    val halfHeights = (a.height + b.height) * 0.5f;
+    var dy = Math.abs(centerDeltaY);
+
+    if (dy > halfHeights) return false; //no overlap on y == no collision
+
+    dx = halfWidths - dx; //overlap on x
+    dy = halfHeights - dy; //overlap on y
+    if (dy < dx) {
+        overlap.y = if (centerDeltaY < 0f) -dy else dy;
+    } else if (dy > dx) {
+        overlap.x = if (centerDeltaX < 0) -dx else dx;
+    } else {
+        overlap.x = if (centerDeltaX < 0) -dx else dx;
+        overlap.y = if (centerDeltaY < 0) -dy else dy;
+    }
+    return true;
+}
+
+
