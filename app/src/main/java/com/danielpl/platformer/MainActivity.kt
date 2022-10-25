@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import com.danielpl.platformer.gamepad.TouchController
 import com.danielpl.platformer.preferences.Preferences
 import com.danielpl.platformer.repository.HighScoreRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,8 +29,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        game = Game(this)
-        setContentView(game)
+        setContentView(R.layout.activity_main)
+        game = findViewById<Game>(R.id.game)
+        val input = TouchController(findViewById(R.id.touch_controller))
+        game.setControls(input)
     }
 
     override fun onResume() {

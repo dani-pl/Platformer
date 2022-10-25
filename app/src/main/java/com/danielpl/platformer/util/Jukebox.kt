@@ -9,12 +9,16 @@ import android.util.Log
 import com.danielpl.platformer.R
 import com.danielpl.platformer.util.Config.DEFAULT_MUSIC_VOLUME
 import java.io.IOException
+import com.danielpl.platformer.util.Config.level
 
 object SFX {
-    var crash = 0
+    var spike = 0
     var starting = 1
     var death = 2
-    var boost = 3
+    var jump = 3
+    var coin = 3
+    var win = 4
+    var block = 5
 }
 
 const val MAX_STREAMS = 3
@@ -38,10 +42,13 @@ class Jukebox(engine: Context) {
             .setMaxStreams(MAX_STREAMS)
             .build()
         Log.d(R.string.jukebox_tag.toString(), "sfx/soundPool created!")
-        SFX.crash = loadSound("sfx/crash.wav")
+        SFX.spike = loadSound("sfx/spike.wav")
         SFX.starting = loadSound("sfx/starting.wav")
         SFX.death = loadSound("sfx/death.wav")
-        SFX.boost = loadSound("sfx/boost.wav")
+        SFX.jump = loadSound("sfx/jump.wav")
+        SFX.coin = loadSound("sfx/coin.wav")
+        SFX.win = loadSound("sfx/win.wav")
+        SFX.block = loadSound("sfx/block.wav")
         loadMusic()
     }
 
@@ -77,10 +84,13 @@ class Jukebox(engine: Context) {
     }
      */
 
-    private fun loadMusic() {
+    fun loadMusic() {
         try {
             mBgPlayer = MediaPlayer()
-            val afd = assetManager.openFd("bgm/background_music.mp3")
+            var afd = assetManager.openFd("bgm/background_music_lv1.mp3")
+            if(level==2) {
+                afd = assetManager.openFd("bgm/background_music_lv2.mp3")
+            }
             mBgPlayer!!.setDataSource(
                 afd.fileDescriptor,
                 afd.startOffset,
@@ -108,14 +118,13 @@ class Jukebox(engine: Context) {
         mBgPlayer!!.start()
     }
 
-    /*
-    Function is never used
-    private fun unloadMusic() {
+
+    fun unloadMusic() {
         if (mBgPlayer == null) {
             return
         }
         mBgPlayer!!.stop()
         mBgPlayer!!.release()
     }
-     */
+
 }

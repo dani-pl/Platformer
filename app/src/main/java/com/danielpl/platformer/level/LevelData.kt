@@ -1,11 +1,11 @@
-package com.danielpl.platformer
+package com.danielpl.platformer.level
 
 import android.util.SparseArray
 import com.danielpl.platformer.util.Config.NULLSPRITE
 
 
 abstract class LevelData {
-    var tiles: Array<IntArray> = emptyArray()
+    var tiles = ArrayList<IntArray>()
     val tileToBitmap = SparseArray<String>()
 
     fun getRow(y: Int): IntArray{

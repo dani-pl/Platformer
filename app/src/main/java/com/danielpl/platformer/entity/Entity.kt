@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.PointF
 import android.util.Log
 import com.danielpl.platformer.R
+import com.danielpl.platformer.util.Jukebox
 import com.danielpl.platformer.util.MovementShapes
 
 abstract class Entity {
@@ -23,7 +24,7 @@ abstract class Entity {
 
     open fun update(dt: Float) {}
     open fun render(canvas: Canvas, transfrom: Matrix, paint: Paint) {}
-    open fun onCollision(that: Entity) {} //notify the Entity about collisions
+    open fun onCollision(that: Entity, jukebox: Jukebox) {} //notify the Entity about collisions
     open fun destroy() {}
     open fun respawn() {}
 

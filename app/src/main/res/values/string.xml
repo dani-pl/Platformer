@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SpaceShooterSample</string>
     <string name="start_game">Start</string>
@@ -5,7 +6,9 @@
     <string name="health_counter">Health %s</string>
     <string name="distance_counter">Distance: %s</string>
     <string name="game_over">Game Over!</string>
-    <string name="restart">press to restart</string>
+    <string name="level_successful">Well Done!</string>
+    <string name="restart">jump to restart</string>
+    <string name="next_level">jump to start next level</string>
 
     <string name="game_tag">game</string>
     <string name="player_tag">player</string>
@@ -24,7 +27,5 @@
     <string name="Km">Km</string>
     <string name="InitialTextRecordPlayerRow">Nobody yet</string>
     <string name="InitialTextRecordKmRow"> - </string>
-
-
-
+    <string name="NumberCoins">%s/%s</string>
 </resources>

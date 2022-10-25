@@ -2,34 +2,54 @@ package com.danielpl.platformer
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.Color.*
+import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.danielpl.platformer.entity.Entity
 import com.danielpl.platformer.entity.Viewport
+import com.danielpl.platformer.gamepad.InputManager
+import com.danielpl.platformer.level.LevelManager
+import com.danielpl.platformer.level.Level
 import com.danielpl.platformer.preferences.Preferences
 import com.danielpl.platformer.repository.HighScoreRepository
+import com.danielpl.platformer.util.*
 import com.danielpl.platformer.util.Config.METERS_TO_SHOW_X
 import com.danielpl.platformer.util.Config.METERS_TO_SHOW_Y
 import com.danielpl.platformer.util.Config.NANOS_TO_SECOND
 import com.danielpl.platformer.util.Config.PIXELS_PER_METER
+import com.danielpl.platformer.util.Config.collectedCollectibles
+import com.danielpl.platformer.util.Config.isGameOver
+import com.danielpl.platformer.util.Config.isLevelSuccessful
+import com.danielpl.platformer.util.Config.playerHealth
+import com.danielpl.platformer.util.Config.restart
+import com.danielpl.platformer.util.Config.totalCollectibles
+import com.danielpl.platformer.util.Config.level
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 lateinit var engine: Game
 
 @AndroidEntryPoint
-class Game(gameActivityContext: Context) : SurfaceView(gameActivityContext), Runnable,
+class Game(context: Context, attrs: AttributeSet? = null) : SurfaceView(context, attrs), Runnable,
     SurfaceHolder.Callback {
     private val stageWidth = getScreenWidth()/2
     private val stageHeight = getScreenHeight()/2
     private val visibleEntities = ArrayList<Entity>()
+
+    private val assetManager = context.assets
+
+    @Inject
+    lateinit var jukebox: Jukebox
 
     init {
         engine = this
         holder.addCallback(this)
         holder.setFixedSize(stageWidth, stageHeight)
     }
+
+    var inputs = InputManager() // a valid null-controller
 
     @Inject
     lateinit var preferences: Preferences
@@ -41,12 +61,12 @@ class Game(gameActivityContext: Context) : SurfaceView(gameActivityContext), Run
 
     @Volatile
     private var isRunning = false
-    private var isGameOver = false
 
-    private var levelManager = LevelManager(TestLevel())
+    val camera = Viewport(stageWidth, stageHeight, METERS_TO_SHOW_X,METERS_TO_SHOW_Y)
+    val pool = BitmapPool(this)
+    private var levelManager = LevelManager(Level("v1_lv$level.txt", assetManager))
 
     private val paint = Paint()
-    val camera = Viewport(stageWidth, stageHeight, METERS_TO_SHOW_X,METERS_TO_SHOW_Y)
     val transform = Matrix()
     val position = PointF()
 
@@ -59,18 +79,54 @@ class Game(gameActivityContext: Context) : SurfaceView(gameActivityContext), Run
     fun getScreenHeight() = context.resources.displayMetrics.heightPixels
     fun getScreenWidth() = context.resources.displayMetrics.widthPixels
 
+    fun setControls(input: InputManager){
+        inputs.onPause()
+        inputs.onStop()
+        inputs=input
+        inputs.onResume()
+        inputs.onStart()
+    }
+    fun getControls() = inputs
+
+    private fun restart() {
+        restart = false
+        if (isLevelSuccessful){
+            if(level == 1){
+                levelManager = LevelManager(Level("v1_lv2.txt", assetManager))
+                level = 2
+            } else{
+                levelManager = LevelManager(Level("v1_lv1.txt", assetManager))
+                level = 1
+            }
+            jukebox.unloadMusic()
+            jukebox.loadMusic()
+
+        } else {
+            levelManager = LevelManager(Level("v1_lv$level.txt", assetManager))
+        }
+        jukebox.resumeBgMusic()
+        isGameOver = false
+        isLevelSuccessful = false
+        playerHealth = 3
+        collectedCollectibles = 0
+    }
+
 
     // Game loop
     override fun run() {
         var lastFrame = System.nanoTime()
         while (isRunning) {
+            if(restart){
+                restart()
+            }
             val deltaTime = (System.nanoTime() - lastFrame) * NANOS_TO_SECOND
             update(deltaTime)
-            // give entities access to controllers
             buildVisibleSet()
             render(visibleEntities)
+
         }
     }
+
 
     private fun buildVisibleSet(){
         visibleEntities.clear()
@@ -82,17 +138,51 @@ class Game(gameActivityContext: Context) : SurfaceView(gameActivityContext), Run
     }
 
     private fun update(deltaTime: Float) {
-        levelManager.update(deltaTime)
+        levelManager.update(deltaTime,jukebox)
+        camera.lookAt(levelManager.player)
+        checkGameOverOrLevelSuccessful()
+    }
+
+    private fun checkGameOverOrLevelSuccessful() {
+        if (playerHealth < 1) {
+            if (!isGameOver) {
+                jukebox.pauseBgMusic()
+                jukebox.play(SFX.death)
+
+                isGameOver = true
+            }
+        }
+
+        if(collectedCollectibles== totalCollectibles){
+            if(!isLevelSuccessful){
+                jukebox.pauseBgMusic()
+                jukebox.play(SFX.win)
+
+                isLevelSuccessful = true
+            }
+        }
     }
 
     private fun render(visibleSet: ArrayList<Entity>) {
         val canvas = acquireAndLockCanvas() ?: return
-        canvas.drawColor(Color.BLUE)
+        if(level==1){
+            canvas.drawColor(BLUE)
+        } else{
+            canvas.drawColor(Color.YELLOW)
+        }
         for(e in visibleSet){
             transform.reset()
             camera.worldToScreen(e,position)
             transform.postTranslate(position.x, position.y)
             e.render(canvas, transform, paint)
+        }
+
+        val renderHud = RenderHud(canvas, paint, context)
+        if (!isGameOver && !isLevelSuccessful) {
+            renderHud.showHealth(playerHealth, paint)
+            renderHud.showCollectibles(collectedCollectibles, paint, totalCollectibles)
+        } else {
+            renderHud.gameOverOrLevelSuccessful(50f, 50f)
         }
         holder.unlockCanvasAndPost(canvas)
     }
@@ -107,6 +197,7 @@ class Game(gameActivityContext: Context) : SurfaceView(gameActivityContext), Run
 
 
     fun pause() {
+        inputs.onPause()
         isRunning = false
         try {
             gameThread.join()
@@ -118,7 +209,10 @@ class Game(gameActivityContext: Context) : SurfaceView(gameActivityContext), Run
 
     fun resume() {
         Log.d(R.string.game_tag.toString(), "resume")
+        inputs.onResume()
         isRunning = true
+        jukebox.play(SFX.starting)
+        jukebox.resumeBgMusic()
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {

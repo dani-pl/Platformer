@@ -13,7 +13,7 @@ object Config {
     const val ACCELERATION = 1.1f
     const val MIN_VEL = 0.1f
     const val MAX_VEL = 20f
-    const val GRAVITY = 40f
+    const val GRAVITY = 0.5f
     const val LIFT = -(GRAVITY * 2f)
     const val DRAG = 0.97f
     const val PLAYER_STARTING_HEALTH = 3
@@ -33,16 +33,38 @@ object Config {
     const val SIN_MODIFIER = 250
     const val OVAL_RANDOMIZER_MIN = 0.1f
     const val RAD_MIN = 10
-    const val TEXT_SIZE = 48f
+    const val TEXT_SIZE = 55f
     const val MARGIN = 10f
-    const val PLAYER = "lightblue_left1"
+    const val PLAYER_BLUE = "lightblue_left1"
+    const val PLAYER_BROWN = "brown_left1"
     const val NULLSPRITE = "nullsprite"
+    const val SPEAR = "spearsdown_brown"
+    const val BLOCK = "enemyblockbrown"
+    const val DYNAMIC_COLLECTIBLE = "coinyellow"
     const val NO_TILE = 0
     const val PIXELS_PER_METER = 50
     const val METERS_TO_SHOW_X = 20f
     const val METERS_TO_SHOW_Y = 0f
     const val NANOS_TO_SECOND = 1.0f/ 1000000000f
     const val MAX_DELTA = 0.48f
+    const val FULL_HEART = "lifehearth_full"
+    const val EMPTY_HEART = "lifehearth_empty"
+    const val COIN = "coinyellow"
+    val heart_size = 1.0f
+    const val GAME_OVER = "game_over"
+    const val GAME_OVER_SIZE = 10f
+
+    @Volatile
+    var isGameOver = false
+
+
+    @Volatile
+    var isLevelSuccessful = false
+
+
+    @Volatile
+    var restart = false
+
 
 
     val RNG = Random(uptimeMillis())
@@ -50,4 +72,15 @@ object Config {
     @Volatile
     var isBoosting = false
     var playerSpeed = 0f
+    @Volatile
+    var playerHealth = 3
+
+    @Volatile
+    var collectedCollectibles = 0
+
+    @Volatile
+    var totalCollectibles = 0
+
+
+    var level = 1
 }

@@ -10,6 +10,7 @@ import com.danielpl.platformer.preferences.DefaultPreferences
 import com.danielpl.platformer.preferences.Preferences
 import com.danielpl.platformer.repository.HighScoreImpl
 import com.danielpl.platformer.repository.HighScoreRepository
+import com.danielpl.platformer.util.Jukebox
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,6 +57,14 @@ object AppModule {
         return HighScoreImpl(
             dao = db.dao
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideJukebox(
+        app: Application
+    ): Jukebox {
+        return Jukebox(app.applicationContext)
     }
 
 
