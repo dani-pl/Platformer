@@ -5,21 +5,20 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import androidx.core.math.MathUtils
 import com.danielpl.platformer.engine
+import com.danielpl.platformer.entity.dynamicEnt.DynamicEntity
 import com.danielpl.platformer.gamepad.InputManager
 import com.danielpl.platformer.util.Config
-import com.danielpl.platformer.util.Config.GRAVITY
+import com.danielpl.platformer.util.Config.LEFT
+import com.danielpl.platformer.util.Config.PLAYER_JUMP_FORCE
+import com.danielpl.platformer.util.Config.PLAYER_RUN_SPEED
+import com.danielpl.platformer.util.Config.RIGHT
 
-const val PLAYER_RUN_SPEED = 6.0f //meters per second
-val PLAYER_JUMP_FORCE: Float = -(GRAVITY) //whatever feels good!
-val LEFT = 1.0f
-val RIGHT = -1.0f
 
-class Player(spriteName: String, xpos: Float, ypos: Float) :
-    DynamicEntity(spriteName, xpos, ypos) {
-    val TAG = "Player"
-    var facing = LEFT
+class Player(spriteName: String, posX: Float, posY: Float) :
+    DynamicEntity(spriteName, posX, posY) {
+    private var facing = LEFT
     var blinking = false
-    var blinking_dt = 0
+    private var blinkingDt = 0
 
     override fun render(canvas: Canvas, transform: Matrix, paint: Paint) {
         if (isVisible()) {
@@ -34,16 +33,16 @@ class Player(spriteName: String, xpos: Float, ypos: Float) :
 
     override fun update(dt: Float) {
         val controls: InputManager = engine.getControls()
-        val direction: Float = controls._horizontalFactor
+        val direction: Float = controls.horizontalFactor
         velX = direction * PLAYER_RUN_SPEED
         x += MathUtils.clamp(velX, -Config.MAX_DELTA, Config.MAX_DELTA)
         facing = getFacingDirection(direction)
-        if (controls._isJumping && isOnGround) {
+        if (controls.isJumping && isOnGround) {
             velY = PLAYER_JUMP_FORCE
             isOnGround = false
         }
         if (blinking) {
-            blinking_dt++
+            blinkingDt++
         }
         super.update(dt)
     }
@@ -51,15 +50,15 @@ class Player(spriteName: String, xpos: Float, ypos: Float) :
     private fun isVisible(): Boolean {
         if (blinking) {
             when {
-                blinking_dt >200 -> {
+                blinkingDt > 200 -> {
                     blinking = false
-                    blinking_dt = 0
+                    blinkingDt = 0
                     return true
                 }
-                blinking_dt % 20 < 10 -> {
+                blinkingDt % 20 < 10 -> {
                     return false
                 }
-                blinking_dt % 20 > 10 -> {
+                blinkingDt % 20 > 10 -> {
                     return true
                 }
             }

@@ -1,7 +1,9 @@
-package com.danielpl.platformer.entity
+package com.danielpl.platformer.entity.dynamicEnt
 
 import androidx.core.math.MathUtils.clamp
 import com.danielpl.platformer.engine
+import com.danielpl.platformer.entity.*
+import com.danielpl.platformer.entity.staticEnt.StaticEntity
 import com.danielpl.platformer.util.Config.GRAVITY
 import com.danielpl.platformer.util.Config.MAX_DELTA
 import com.danielpl.platformer.util.Jukebox
@@ -14,7 +16,7 @@ open class DynamicEntity(sprite: String, x: Float, y: Float) : StaticEntity(spri
 
     override fun update(dt: Float) {
         if (!isOnGround) {
-            velY += GRAVITY/17
+            velY += GRAVITY / 17
         }
         y += clamp(velY, -MAX_DELTA, MAX_DELTA)
         if (top() > engine.worldHeight()) {
@@ -28,19 +30,19 @@ open class DynamicEntity(sprite: String, x: Float, y: Float) : StaticEntity(spri
         x += overlap.x
         y += overlap.y
         if (overlap.y != 0f) {
-            if(this is DynamicCollectible){
+            if (this is DynamicCollectible) {
                 velY = 0.0f
             }
-            if(this is DynamicEnemy){
+            if (this is DynamicEnemy) {
                 velY = 0.0f
             }
-            if(this is Player && that is DynamicEnemy){
+            if (this is Player && that is DynamicEnemy) {
                 velY = 0.0f
             }
             if (overlap.y < 0f && that !is Player) { //we've hit our feet
-                if((this is DynamicCollectible || this is DynamicEnemy)){
-                    velY -= GRAVITY*0.8.toFloat()
-                } else{
+                if ((this is DynamicCollectible || this is DynamicEnemy)) {
+                    velY -= GRAVITY * 0.8.toFloat()
+                } else {
                     isOnGround = true
                 }
             } // overlap.y > 0f == we've hit our head

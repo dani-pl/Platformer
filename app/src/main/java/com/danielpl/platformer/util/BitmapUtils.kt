@@ -22,7 +22,12 @@ object BitmapUtils {
             bmp.width.toFloat(),
             bmp.height.toFloat()
         )
-        return Bitmap.createScaledBitmap(bmp, newDimensions.x, newDimensions.y, USE_BILINEAR_FILTERING)
+        return Bitmap.createScaledBitmap(
+            bmp,
+            newDimensions.x,
+            newDimensions.y,
+            USE_BILINEAR_FILTERING
+        )
     }
 
     //Set either of the dimensions for aspect-correct scaling, or both to force the aspect.
@@ -49,10 +54,16 @@ object BitmapUtils {
             options.outWidth.toFloat(),
             options.outHeight.toFloat()
         )
-        var bitmap: Bitmap = loadSubSampledBitmap(res, resID, newDimensions.x, newDimensions.y, options)
+        var bitmap: Bitmap =
+            loadSubSampledBitmap(res, resID, newDimensions.x, newDimensions.y, options)
         if (bitmap.height != newDimensions.y || bitmap.width != newDimensions.x) {
             //scale to pixel-perfect dimensions in case we have non-uniform density on x / y
-            bitmap = Bitmap.createScaledBitmap(bitmap, newDimensions.x, newDimensions.y, USE_BILINEAR_FILTERING)
+            bitmap = Bitmap.createScaledBitmap(
+                bitmap,
+                newDimensions.x,
+                newDimensions.y,
+                USE_BILINEAR_FILTERING
+            )
         }
         return bitmap
     }
@@ -106,7 +117,8 @@ object BitmapUtils {
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true //only read metadata right now
         BitmapFactory.decodeResource(res, resID, options)
-        options.inJustDecodeBounds = false //next time we use this option-object, read the actual file.
+        options.inJustDecodeBounds =
+            false //next time we use this option-object, read the actual file.
         return options
     }
 
@@ -116,8 +128,8 @@ object BitmapUtils {
         targetWidth: Float, targetHeight: Float,
         srcWidth: Float, srcHeight: Float
     ): Point {
-        var targetWidth = if(targetWidth > 0) targetWidth else srcWidth
-        var targetHeight = if(targetHeight > 0) targetHeight else srcHeight
+        val targetWidth = if (targetWidth > 0) targetWidth else srcWidth
+        val targetHeight = if (targetHeight > 0) targetHeight else srcHeight
         val newDimensions = Point(targetWidth.toInt(), targetHeight.toInt())
 
         if (targetWidth == 0f || targetHeight == 0f) {

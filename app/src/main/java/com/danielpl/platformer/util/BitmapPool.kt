@@ -8,16 +8,17 @@ import com.danielpl.platformer.util.BitmapUtils.loadScaledBitmap
 class BitmapPool(private val engine: Game) {
     val TAG = "BitmapPool"
     private val bitmaps: HashMap<String, Bitmap> = HashMap()
-    private var nullsprite: Bitmap = loadScaledBitmap(engine.context, "nullsprite",
+    private var nullsprite: Bitmap = loadScaledBitmap(
+        engine.context, "nullsprite",
         engine.worldToScreenX(1.0f).toInt(),
         engine.worldToScreenY(1.0f).toInt()
     )
 
     private fun getBitmap(key: String) = bitmaps[key] ?: nullsprite
 
-    public fun createBitmap(sprite: String, widthMeters: Float, heightMeters: Float): Bitmap {
+    fun createBitmap(sprite: String, widthMeters: Float, heightMeters: Float): Bitmap {
         val key = makeKey(sprite, widthMeters, heightMeters)
-        if(bitmaps.containsKey(key)){
+        if (bitmaps.containsKey(key)) {
             return getBitmap(key)
         }
         try {
@@ -35,16 +36,21 @@ class BitmapPool(private val engine: Game) {
         return nullsprite
     }
 
-    public fun empty() {
+    fun empty() {
         for ((key, value) in bitmaps) {
             value.recycle()
         }
         bitmaps.clear()
     }
-    public fun size() = bitmaps.size
 
-    private fun makeKey(name: String, widthMeters: Float, heightMeters: Float) = name + "_" + widthMeters + "_" + heightMeters
-    private fun put(key: String, bmp: Bitmap){ bitmaps[key] = bmp }
+    fun size() = bitmaps.size
+
+    private fun makeKey(name: String, widthMeters: Float, heightMeters: Float) =
+        name + "_" + widthMeters + "_" + heightMeters
+
+    private fun put(key: String, bmp: Bitmap) {
+        bitmaps[key] = bmp
+    }
 
     private fun contains(key: String) = bitmaps.containsKey(key)
     private fun contains(bmp: Bitmap) = bitmaps.containsValue(bmp)

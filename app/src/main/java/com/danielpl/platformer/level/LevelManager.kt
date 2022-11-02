@@ -1,8 +1,12 @@
 package com.danielpl.platformer.level
 
 import com.danielpl.platformer.entity.*
+import com.danielpl.platformer.entity.dynamicEnt.DynamicCollectible
+import com.danielpl.platformer.entity.dynamicEnt.DynamicEnemy
+import com.danielpl.platformer.entity.staticEnt.StaticEnemy
+import com.danielpl.platformer.entity.staticEnt.StaticEntity
 import com.danielpl.platformer.util.Config.BLOCK
-import com.danielpl.platformer.util.Config.DYNAMIC_COLLECTIBLE
+import com.danielpl.platformer.util.Config.COIN
 import com.danielpl.platformer.util.Config.NO_TILE
 import com.danielpl.platformer.util.Config.PLAYER_BLUE
 import com.danielpl.platformer.util.Config.PLAYER_BROWN
@@ -13,9 +17,9 @@ class LevelManager(level: LevelData) {
     var levelHeight = 0
     lateinit var player: Player
     val entities = ArrayList<Entity>()
-    val entitiesToAdd = ArrayList<Entity>()
-    val entitiesToRemove = ArrayList<Entity>()
-    var collectibles = ArrayList<DynamicCollectible>()
+    private val entitiesToAdd = ArrayList<Entity>()
+    private val entitiesToRemove = ArrayList<Entity>()
+    private var collectibles = ArrayList<DynamicCollectible>()
 
     init {
         loadAssets(level)
@@ -31,17 +35,17 @@ class LevelManager(level: LevelData) {
     }
 
     private fun doCollisionsChecks(jukebox: Jukebox) {
-        for(e in entities){
-            if(e == player) continue
-            if(isColliding(player,e)) {
+        for (e in entities) {
+            if (e == player) continue
+            if (isColliding(player, e)) {
                 e.onCollision(player, jukebox)
-                if(e is DynamicCollectible){
+                if (e is DynamicCollectible) {
                     removeEntity(e)
                     continue
                 }
                 player.onCollision(e, jukebox)
-            } else if(e !is DynamicCollectible || e !is DynamicEnemy){
-                if(e !is DynamicCollectible) {
+            } else if (e !is DynamicCollectible || e !is DynamicEnemy) {
+                if (e !is DynamicCollectible) {
                     entities.filter {
                         (it is DynamicCollectible)
                     }.forEach {
@@ -50,7 +54,7 @@ class LevelManager(level: LevelData) {
                         }
                     }
                 }
-                if(e !is DynamicEnemy) {
+                if (e !is DynamicEnemy) {
                     entities.filter {
                         (it is DynamicEnemy)
                     }.forEach {
@@ -80,22 +84,22 @@ class LevelManager(level: LevelData) {
     }
 
     private fun createEntity(spriteName: String, x: Int, y: Int) {
-        when(spriteName) {
+        when (spriteName) {
             PLAYER_BLUE -> {
                 player = Player(spriteName, x.toFloat(), y.toFloat())
                 addEntity(player)
             }
-            PLAYER_BROWN->{
+            PLAYER_BROWN -> {
                 player = Player(spriteName, x.toFloat(), y.toFloat())
                 addEntity(player)
             }
-            SPEAR-> {
+            SPEAR -> {
                 addEntity(StaticEnemy(spriteName, x.toFloat(), y.toFloat(), Enemies.SPEARS))
             }
             BLOCK -> {
                 addEntity(DynamicEnemy(spriteName, x.toFloat(), y.toFloat()))
             }
-            DYNAMIC_COLLECTIBLE ->{
+            COIN -> {
                 val collectible = DynamicCollectible(spriteName, x.toFloat(), y.toFloat())
                 addEntity(collectible)
                 collectibles.add(collectible)
@@ -106,11 +110,11 @@ class LevelManager(level: LevelData) {
         }
     }
 
-    fun addEntity(e: Entity) {
+    private fun addEntity(e: Entity) {
         entitiesToAdd.add(e)
     }
 
-    fun removeEntity(e: Entity) {
+    private fun removeEntity(e: Entity) {
         entitiesToRemove.add(e)
     }
 
@@ -125,6 +129,10 @@ class LevelManager(level: LevelData) {
         entitiesToRemove.clear()
     }
 
+    /*
+
+    // Functions are never used
+
     private fun cleanup() {
         addAndRemoveEntities()
         for (e in entities) {
@@ -136,4 +144,6 @@ class LevelManager(level: LevelData) {
     fun destroy() {
         cleanup()
     }
+
+     */
 }

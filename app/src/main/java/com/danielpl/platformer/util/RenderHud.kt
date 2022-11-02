@@ -2,17 +2,13 @@ package com.danielpl.platformer.util
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Color.*
 import android.graphics.Paint
-import android.provider.Settings.Global.getString
 import com.danielpl.platformer.R
 import com.danielpl.platformer.engine
 import com.danielpl.platformer.util.Config.COIN
 import com.danielpl.platformer.util.Config.EMPTY_HEART
 import com.danielpl.platformer.util.Config.FULL_HEART
-import com.danielpl.platformer.util.Config.GAME_OVER
-import com.danielpl.platformer.util.Config.GAME_OVER_SIZE
 import com.danielpl.platformer.util.Config.MARGIN
 import com.danielpl.platformer.util.Config.TEXT_SIZE
 import com.danielpl.platformer.util.Config.heart_size
@@ -32,10 +28,8 @@ class RenderHud(
     private val emptyHeartBitmap = engine.pool.createBitmap(EMPTY_HEART, heart_size, heart_size)
     private val coinBitmap = engine.pool.createBitmap(COIN, heart_size, heart_size)
 
-    val game_over_bitmap = engine.pool.createBitmap(GAME_OVER, GAME_OVER_SIZE * 2, GAME_OVER_SIZE)
-
     init {
-        paint.color = Color.WHITE
+        paint.color = WHITE
         paint.textAlign = Paint.Align.LEFT
         paint.textSize = textSize
     }
@@ -69,7 +63,7 @@ class RenderHud(
         }
     }
 
-    fun showCollectibles(NumberOfCollectibles: Int,paint: Paint, totalCollectibles: Int) {
+    fun showCollectibles(NumberOfCollectibles: Int, paint: Paint, totalCollectibles: Int) {
         canvas.drawBitmap(
             coinBitmap,
             margin + (bitmapHeartSize * 4),
@@ -77,18 +71,22 @@ class RenderHud(
             paint
         )
         canvas.drawText(
-            context.getString(R.string.NumberCoins,NumberOfCollectibles.toString(),totalCollectibles.toString()), 2 * margin + (bitmapHeartSize * 5),
+            context.getString(
+                R.string.NumberCoins,
+                NumberOfCollectibles.toString(),
+                totalCollectibles.toString()
+            ), 2 * margin + (bitmapHeartSize * 5),
             TEXT_SIZE, paint
         )
     }
 
-    fun gameOverOrLevelSuccessful(x: Float, y: Float) {
+    fun gameOverOrLevelSuccessful() {
         paint.textAlign = Paint.Align.CENTER
         paint.color = BLACK
         paint.isFakeBoldText = true
         val centerX = Config.STAGE_WIDTH * 0.5f
         val centerY = Config.STAGE_HEIGHT * 0.5f
-        if(isGameOver) {
+        if (isGameOver) {
             paint.color = BLACK
             canvas.drawText(
                 context.getString(R.string.game_over),
@@ -97,7 +95,7 @@ class RenderHud(
                 paint
             )
             canvas.drawText(context.getString(R.string.restart), centerX, centerY, paint)
-        } else if(isLevelSuccessful){
+        } else if (isLevelSuccessful) {
             paint.color = GREEN
             canvas.drawText(
                 context.getString(R.string.level_successful),

@@ -1,5 +1,6 @@
 package com.danielpl.platformer.gamepad
 
+import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
@@ -7,8 +8,8 @@ import com.danielpl.platformer.R
 import com.danielpl.platformer.util.Config.isGameOver
 import com.danielpl.platformer.util.Config.isLevelSuccessful
 import com.danielpl.platformer.util.Config.restart
-import com.danielpl.platformer.util.Jukebox
 
+@SuppressLint("ClickableViewAccessibility")
 class TouchController(view: View) : InputManager(), View.OnTouchListener {
 
     init {
@@ -23,44 +24,45 @@ class TouchController(view: View) : InputManager(), View.OnTouchListener {
         view.findViewById<Button>(R.id.gamepad_jump)
             .setOnTouchListener(this)
     }
+
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         val action = event.actionMasked
-        val id: Int = v.getId()
+        val id: Int = v.id
         if (action == MotionEvent.ACTION_DOWN) {
             // player is pressing a "button"
             if (id == R.id.gamepad_up) {
-                _verticalFactor -= 1
+                verticalFactor -= 1
             } else if (id == R.id.gamepad_down) {
-                _verticalFactor += 1
+                verticalFactor += 1
             }
             if (id == R.id.gamepad_left) {
-                _horizontalFactor -= 1
+                horizontalFactor -= 1
             } else if (id == R.id.gamepad_right) {
-                _horizontalFactor += 1
+                horizontalFactor += 1
             }
             if (id == R.id.gamepad_jump) {
-                _isJumping = true
+                isJumping = true
             }
             if (isGameOver) {
                 restart = true
             }
-            if(isLevelSuccessful){
+            if (isLevelSuccessful) {
                 restart = true
             }
         } else if (action == MotionEvent.ACTION_UP) {
             // player released a "button"
             if (id == R.id.gamepad_up) {
-                _verticalFactor += 1
+                verticalFactor += 1
             } else if (id == R.id.gamepad_down) {
-                _verticalFactor -= 1
+                verticalFactor -= 1
             }
             if (id == R.id.gamepad_left) {
-                _horizontalFactor += 1
+                horizontalFactor += 1
             } else if (id == R.id.gamepad_right) {
-                _horizontalFactor -= 1
+                horizontalFactor -= 1
             }
             if (id == R.id.gamepad_jump) {
-                _isJumping = false
+                isJumping = false
             }
         }
         return false

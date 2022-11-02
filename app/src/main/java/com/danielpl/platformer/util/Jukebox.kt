@@ -88,7 +88,7 @@ class Jukebox(engine: Context) {
         try {
             mBgPlayer = MediaPlayer()
             var afd = assetManager.openFd("bgm/background_music_lv1.mp3")
-            if(level==2) {
+            if (level == 2) {
                 afd = assetManager.openFd("bgm/background_music_lv2.mp3")
             }
             mBgPlayer!!.setDataSource(

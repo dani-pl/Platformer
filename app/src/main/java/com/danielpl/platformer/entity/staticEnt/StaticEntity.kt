@@ -1,14 +1,14 @@
-package com.danielpl.platformer.entity
+package com.danielpl.platformer.entity.staticEnt
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import com.danielpl.platformer.engine
-import com.danielpl.platformer.util.BitmapUtils
+import com.danielpl.platformer.entity.Entity
 
 open class StaticEntity(sprite: String, x: Float, y: Float) : Entity() {
-    lateinit var bitmap: Bitmap
+    var bitmap: Bitmap
 
     init {
         this.x = x
@@ -16,17 +16,6 @@ open class StaticEntity(sprite: String, x: Float, y: Float) : Entity() {
         width = 1.0f
         height = 1.0f
         bitmap = engine.pool.createBitmap(sprite, width, height)
-        /*
-        val widthInPixels = engine.worldToScreenX(width)
-        val heightInPixels = engine.worldToScreenX(height)
-        bitmap = BitmapUtils.loadScaledBitmap(
-            engine.context,
-            sprite,
-            widthInPixels.toInt(),
-            heightInPixels.toInt()
-        )
-
-         */
     }
 
     override fun render(canvas: Canvas, transform: Matrix, paint: Paint) {

@@ -1,14 +1,14 @@
 package com.danielpl.platformer.entity
 
 
-import android.graphics.Point
 import android.graphics.PointF
 
 class Viewport(
-    val screenWidth: Int,
-    val screenHeight: Int,
+    private val screenWidth: Int,
+    private val screenHeight: Int,
     metersToShowX: Float,
-    metersToShowY: Float) : Entity() {
+    metersToShowY: Float
+) : Entity() {
     private var pixelsPerMeterX = 0f
     private var pixelsPerMeterY = 0f
     private val screenCenterX = screenWidth / 2
@@ -16,11 +16,18 @@ class Viewport(
 
     init {
         setMetersToShow(metersToShowX, metersToShowY)
-        lookAt(2f,0f)
+        lookAt(2f, 0f)
     }
+
+
+    /*
+
+    // Functions are never used
 
     fun worldToScreenX(worldDistance: Float) = (worldDistance * pixelsPerMeterX)
     fun worldToScreenY(worldDistance: Float) = (worldDistance * pixelsPerMeterY)
+
+     */
 
     //setMetersToShow calculates the number of physical pixels per meters
     //so that we can translate our game world (meters) to the screen (pixels)
@@ -43,16 +50,12 @@ class Viewport(
         pixelsPerMeterY = (screenHeight / height)
     }
 
-    fun lookAt(x: Float, y: Float) {
-        setCenter(x,y)
+    private fun lookAt(x: Float, y: Float) {
+        setCenter(x, y)
     }
 
     fun lookAt(e: Entity) {
         lookAt(e.centerX(), e.centerY())
-    }
-
-    fun lookAt(pos: PointF) {
-        lookAt(pos.x, pos.y)
     }
 
     private fun worldToScreen(worldPosX: Float, worldPosY: Float, screenPos: PointF) {
@@ -60,16 +63,12 @@ class Viewport(
         screenPos.y = (screenCenterY - (centerY() - worldPosY) * pixelsPerMeterY)
     }
 
-    fun worldToScreen(worldPos: PointF, screenPos: PointF) {
-        worldToScreen(worldPos.x, worldPos.y, screenPos)
-    }
-
     fun worldToScreen(e: Entity, screenPos: PointF) {
         worldToScreen(e.x, e.y, screenPos)
     }
 
     fun inView(e: Entity): Boolean {
-        return isColliding(this,e)
+        return isColliding(this, e)
     }
 
     override fun toString(): String {

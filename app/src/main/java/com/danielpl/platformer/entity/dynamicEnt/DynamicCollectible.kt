@@ -1,20 +1,20 @@
-package com.danielpl.platformer.entity
+package com.danielpl.platformer.entity.dynamicEnt
 
-import com.danielpl.platformer.util.Config
+import com.danielpl.platformer.entity.Entity
+import com.danielpl.platformer.entity.Player
 import com.danielpl.platformer.util.Config.collectedCollectibles
 import com.danielpl.platformer.util.Jukebox
 import com.danielpl.platformer.util.SFX
 
-class DynamicCollectible(sprite: String, x: Float, y: Float): DynamicEntity(sprite, x, y) {
+class DynamicCollectible(sprite: String, x: Float, y: Float) : DynamicEntity(sprite, x, y) {
 
 
     override fun onCollision(that: Entity, jukebox: Jukebox) {
-        if(that is Player){
+        if (that is Player) {
             jukebox.play(SFX.coin)
             collectedCollectibles++
             super.onCollision(that, jukebox)
-        }
-        else{
+        } else {
             super.onCollision(that, jukebox)
         }
     }

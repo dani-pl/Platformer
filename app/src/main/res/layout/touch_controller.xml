@@ -8,24 +8,24 @@
 
     <Button android:id="@+id/gamepad_up"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/gamepad_left"
+        android:layout_toEndOf="@+id/gamepad_left"
         android:layout_width="@dimen/button_size"
         android:layout_height="@dimen/button_size"/>
 
     <Button android:id="@+id/gamepad_down"
         android:layout_below="@+id/gamepad_left"
-        android:layout_toRightOf="@+id/gamepad_left"
+        android:layout_toEndOf="@+id/gamepad_left"
         android:layout_width="@dimen/button_size"
         android:layout_height="@dimen/button_size" />
 
     <Button android:id="@+id/gamepad_left"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/gamepad_up"
         android:layout_width="@dimen/button_size"
         android:layout_height="@dimen/button_size" />
 
     <Button android:id="@+id/gamepad_right"
-        android:layout_toRightOf="@+id/gamepad_up"
+        android:layout_toEndOf="@+id/gamepad_up"
         android:layout_below="@+id/gamepad_up"
         android:layout_width="@dimen/button_size"
         android:layout_height="@dimen/button_size" />
@@ -35,5 +35,5 @@
         android:layout_width="@dimen/button_size"
         android:layout_height="@dimen/button_size"
         android:layout_alignTop="@+id/gamepad_left"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
