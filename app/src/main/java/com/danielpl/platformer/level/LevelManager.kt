@@ -86,11 +86,11 @@ class LevelManager(level: LevelData) {
     private fun createEntity(spriteName: String, x: Int, y: Int) {
         when (spriteName) {
             PLAYER_BLUE -> {
-                player = Player(spriteName, x.toFloat(), y.toFloat())
+                player = Player(spriteName, "lightblue_left2","lightblue_left3", x.toFloat(), y.toFloat())
                 addEntity(player)
             }
             PLAYER_BROWN -> {
-                player = Player(spriteName, x.toFloat(), y.toFloat())
+                player = Player(spriteName,"brown_left2","brown_left3", x.toFloat(), y.toFloat())
                 addEntity(player)
             }
             SPEAR -> {

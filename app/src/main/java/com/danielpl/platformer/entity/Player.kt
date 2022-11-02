@@ -1,5 +1,6 @@
 package com.danielpl.platformer.entity
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
@@ -14,11 +15,15 @@ import com.danielpl.platformer.util.Config.PLAYER_RUN_SPEED
 import com.danielpl.platformer.util.Config.RIGHT
 
 
-class Player(spriteName: String, posX: Float, posY: Float) :
-    DynamicEntity(spriteName, posX, posY) {
+class Player(sprite1: String, sprite2: String, sprite3: String, posX: Float, posY: Float) :
+    DynamicEntity(sprite1, posX, posY) {
     private var facing = LEFT
     var blinking = false
     private var blinkingDt = 0
+    private var nextSpriteNumber = 1
+    private var bitmapSprite1: Bitmap = engine.pool.createBitmap(sprite1, width, height)
+    private var bitmapSprite2: Bitmap = engine.pool.createBitmap(sprite2, width, height)
+    private var bitmapSprite3: Bitmap = engine.pool.createBitmap(sprite3, width, height)
 
     override fun render(canvas: Canvas, transform: Matrix, paint: Paint) {
         if (isVisible()) {
@@ -27,9 +32,30 @@ class Player(spriteName: String, posX: Float, posY: Float) :
                 val offset = engine.worldToScreenX(width)
                 transform.postTranslate(offset, 0.0f)
             }
-            super.render(canvas, transform, paint)
+            val controls: InputManager = engine.getControls()
+            val direction: Float = controls.horizontalFactor
+            if(direction !=0f){
+                when (nextSpriteNumber) {
+                    1 -> {
+                        bitmap = bitmapSprite1
+                        nextSpriteNumber = 2
+                    }
+                    2 -> {
+                        bitmap = bitmapSprite2
+                        nextSpriteNumber = 3
+                    }
+                    3 -> {
+                        bitmap = bitmapSprite3
+                        nextSpriteNumber = 1
+                    }
+                }
+            }
+
+            canvas.drawBitmap(bitmap, transform, paint)
+            //super.render(canvas, transform, paint)
         }
     }
+
 
     override fun update(dt: Float) {
         val controls: InputManager = engine.getControls()
