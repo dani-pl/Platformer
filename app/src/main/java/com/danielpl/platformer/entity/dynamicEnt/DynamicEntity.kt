@@ -15,6 +15,7 @@ open class DynamicEntity(sprite: String, x: Float, y: Float) : StaticEntity(spri
     var isOnGround = false
 
     override fun update(dt: Float) {
+        // when the entity is on the air, it keeps falling at a fixed rate
         if (!isOnGround) {
             velY += GRAVITY / 17
         }
@@ -22,6 +23,7 @@ open class DynamicEntity(sprite: String, x: Float, y: Float) : StaticEntity(spri
         if (top() > engine.worldHeight()) {
             setBottom(0f)
         }
+        // the entity is on the air
         isOnGround = false
     }
 
@@ -29,23 +31,11 @@ open class DynamicEntity(sprite: String, x: Float, y: Float) : StaticEntity(spri
         getOverlap(this, that, overlap)
         x += overlap.x
         y += overlap.y
+        // When the entity touches something with its bottom part. it stops moving
         if (overlap.y != 0f) {
-            if (this is DynamicCollectible) {
-                velY = 0.0f
-            }
-            if (this is DynamicEnemy) {
-                velY = 0.0f
-            }
-            if (this is Player && that is DynamicEnemy) {
-                velY = 0.0f
-            }
-            if (overlap.y < 0f && that !is Player) { //we've hit our feet
-                if ((this is DynamicCollectible || this is DynamicEnemy)) {
-                    velY -= GRAVITY * 0.8.toFloat()
-                } else {
-                    isOnGround = true
-                }
-            } // overlap.y > 0f == we've hit our head
+            velY = 0.0f
+            // the entity is on the floor
+            isOnGround = true
         }
     }
 }

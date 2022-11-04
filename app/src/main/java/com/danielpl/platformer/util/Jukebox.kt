@@ -27,8 +27,6 @@ class Jukebox(engine: Context) {
     private val assetManager = engine.assets
     private val soundPool: SoundPool
     private var mBgPlayer: MediaPlayer? = null
-
-    //private var mSoundEnabled = true
     private var mMusicEnabled = true
 
 

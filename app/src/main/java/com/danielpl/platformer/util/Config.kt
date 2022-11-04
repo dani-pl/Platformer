@@ -29,6 +29,13 @@ object Config {
     const val LEFT = 1.0f
     const val RIGHT = -1.0f
 
+    const val PLAYER_WIDTH = 1f
+    const val PLAYER_HEIGHT = 1f
+    const val PLAYER_FRAME_LIFECYCLES_DURATION = 3
+    val PLAYER_SPRITES_LEVEL1 = listOf("lightblue_left1", "lightblue_left2", "lightblue_left3")
+    val PLAYER_SPRITES_LEVEL2 = listOf("brown_left1", "brown_left2", "brown_left3")
+
+
     @Volatile
     var isGameOver = false
 
@@ -36,15 +43,8 @@ object Config {
     @Volatile
     var isLevelSuccessful = false
 
-
     @Volatile
     var restart = false
-
-    @Volatile
-    var playerHealth = 3
-
-    @Volatile
-    var collectedCollectibles = 0
 
     @Volatile
     var totalCollectibles = 0

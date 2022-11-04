@@ -8,7 +8,7 @@ import com.danielpl.platformer.engine
 import com.danielpl.platformer.entity.Entity
 
 open class StaticEntity(sprite: String, x: Float, y: Float) : Entity() {
-    var bitmap: Bitmap
+    private var bitmap: Bitmap
 
     init {
         this.x = x

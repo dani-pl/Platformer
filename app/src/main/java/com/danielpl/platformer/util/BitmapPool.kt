@@ -3,12 +3,12 @@ package com.danielpl.platformer.util
 import android.graphics.Bitmap
 import android.util.Log
 import com.danielpl.platformer.Game
-import com.danielpl.platformer.util.BitmapUtils.loadScaledBitmap
+
 
 class BitmapPool(private val engine: Game) {
-    val TAG = "BitmapPool"
+    private val tag = "BitmapPool"
     private val bitmaps: HashMap<String, Bitmap> = HashMap()
-    private var nullsprite: Bitmap = loadScaledBitmap(
+    private var nullsprite: Bitmap = BitmapUtils.loadScaledBitmap(
         engine.context, "nullsprite",
         engine.worldToScreenX(1.0f).toInt(),
         engine.worldToScreenY(1.0f).toInt()
@@ -22,7 +22,7 @@ class BitmapPool(private val engine: Game) {
             return getBitmap(key)
         }
         try {
-            val bmp = loadScaledBitmap(
+            val bmp = BitmapUtils.loadScaledBitmap(
                 engine.context,
                 sprite,
                 engine.worldToScreenX(widthMeters).toInt(),
@@ -31,10 +31,14 @@ class BitmapPool(private val engine: Game) {
             put(key, bmp)
             return bmp
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to createBitmap $sprite! Returning nullsprite", e)
+            Log.w(tag, "Failed to createBitmap $sprite! Returning nullsprite", e)
         }
         return nullsprite
     }
+
+    /*
+
+    // Functions are never used
 
     fun empty() {
         for ((key, value) in bitmaps) {
@@ -43,7 +47,12 @@ class BitmapPool(private val engine: Game) {
         bitmaps.clear()
     }
 
+
+
     fun size() = bitmaps.size
+
+
+     */
 
     private fun makeKey(name: String, widthMeters: Float, heightMeters: Float) =
         name + "_" + widthMeters + "_" + heightMeters
@@ -52,8 +61,13 @@ class BitmapPool(private val engine: Game) {
         bitmaps[key] = bmp
     }
 
+    /*
+    // Functions are never used
+
+
     private fun contains(key: String) = bitmaps.containsKey(key)
     private fun contains(bmp: Bitmap) = bitmaps.containsValue(bmp)
+
 
     private fun getKey(bmp: Bitmap): String {
         for ((key, value) in bitmaps) {
@@ -69,4 +83,6 @@ class BitmapPool(private val engine: Game) {
         bitmaps.remove(key)
         bmp.recycle()
     }
+
+     */
 }

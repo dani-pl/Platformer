@@ -8,7 +8,7 @@ import com.danielpl.platformer.gamepad.TouchController
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var game: Game
+    private lateinit var game: Game
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

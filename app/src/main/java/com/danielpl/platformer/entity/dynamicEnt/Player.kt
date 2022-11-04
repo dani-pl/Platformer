@@ -1,61 +1,78 @@
-package com.danielpl.platformer.entity
+package com.danielpl.platformer.entity.dynamicEnt
 
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import androidx.core.math.MathUtils
 import com.danielpl.platformer.engine
-import com.danielpl.platformer.entity.dynamicEnt.DynamicEntity
+import com.danielpl.platformer.entity.Entity
+import com.danielpl.platformer.entity.overlap
 import com.danielpl.platformer.gamepad.InputManager
+import com.danielpl.platformer.entity.animation.Animation
+import com.danielpl.platformer.entity.staticEnt.StaticEnemy
 import com.danielpl.platformer.util.Config
 import com.danielpl.platformer.util.Config.LEFT
 import com.danielpl.platformer.util.Config.PLAYER_JUMP_FORCE
 import com.danielpl.platformer.util.Config.PLAYER_RUN_SPEED
 import com.danielpl.platformer.util.Config.RIGHT
+import com.danielpl.platformer.util.Jukebox
+import com.danielpl.platformer.util.SFX
 
 
-class Player(sprite1: String, sprite2: String, sprite3: String, posX: Float, posY: Float) :
-    DynamicEntity(sprite1, posX, posY) {
+class Player(private val animation: Animation, posX: Float, posY: Float) :
+    DynamicEntity(animation.frames[0].sprite, posX, posY) {
+
     private var facing = LEFT
-    var blinking = false
+    private var blinking = false
     private var blinkingDt = 0
-    private var nextSpriteNumber = 1
-    private var bitmapSprite1: Bitmap = engine.pool.createBitmap(sprite1, width, height)
-    private var bitmapSprite2: Bitmap = engine.pool.createBitmap(sprite2, width, height)
-    private var bitmapSprite3: Bitmap = engine.pool.createBitmap(sprite3, width, height)
+    var health = 3
+    var wallet = 0
+
+
+
+    override fun onCollision(that: Entity, jukebox: Jukebox) {
+        super.onCollision(that, jukebox)
+
+        // If the collectible is overlapping with the player in some axis, the collectible is collected
+        if (that is Collectible) {
+            jukebox.play(SFX.coin)
+            wallet++
+            that.collected = true
+        }
+        // if a dynamicEnemy is colliding with the player
+        if (that is DynamicEnemy) {
+            // jumping over it and not blinking
+            if (overlap.y > 0f && !blinking) {
+                // then, the player loses a life
+                blinking = true
+                jukebox.play(SFX.block)
+                health--
+            }
+        }
+        // If a player touches a static enemy
+        if (that is StaticEnemy) {
+            // jumping over it and not blinking
+            if (overlap.y < 0f && !blinking) {
+                // then, the player loses a life
+                blinking = true
+                jukebox.play(SFX.block)
+                health--
+            }
+        }
+    }
 
     override fun render(canvas: Canvas, transform: Matrix, paint: Paint) {
-        if (isVisible()) {
+        if(isVisible()) {
             transform.preScale(facing, 1.0f)
             if (facing == RIGHT) {
                 val offset = engine.worldToScreenX(width)
                 transform.postTranslate(offset, 0.0f)
             }
-            val controls: InputManager = engine.getControls()
-            val direction: Float = controls.horizontalFactor
-            if(direction !=0f){
-                when (nextSpriteNumber) {
-                    1 -> {
-                        bitmap = bitmapSprite1
-                        nextSpriteNumber = 2
-                    }
-                    2 -> {
-                        bitmap = bitmapSprite2
-                        nextSpriteNumber = 3
-                    }
-                    3 -> {
-                        bitmap = bitmapSprite3
-                        nextSpriteNumber = 1
-                    }
-                }
-            }
 
-            canvas.drawBitmap(bitmap, transform, paint)
-            //super.render(canvas, transform, paint)
+            canvas.drawBitmap(animation.getBitmapToRender(), transform, paint)
         }
-    }
 
+    }
 
     override fun update(dt: Float) {
         val controls: InputManager = engine.getControls()
@@ -69,6 +86,10 @@ class Player(sprite1: String, sprite2: String, sprite3: String, posX: Float, pos
         }
         if (blinking) {
             blinkingDt++
+        }
+        // If the player is moving keeps the animation running
+        if(direction!=0f) {
+            animation.update()
         }
         super.update(dt)
     }

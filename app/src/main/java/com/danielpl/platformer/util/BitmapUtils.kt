@@ -4,14 +4,15 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.graphics.Point
 
 
+@Suppress("NAME_SHADOWING")
 object BitmapUtils {
-    private const val TAG = "BitmapUtils"
     private const val USE_BILINEAR_FILTERING = true
 
+    /*
+    // Function is never used
     fun scaleBitmap(bmp: Bitmap, targetWidth: Int, targetHeight: Int): Bitmap {
         if (targetWidth == bmp.width && targetHeight == bmp.height) {
             return bmp
@@ -29,6 +30,8 @@ object BitmapUtils {
             USE_BILINEAR_FILTERING
         )
     }
+
+     */
 
     //Set either of the dimensions for aspect-correct scaling, or both to force the aspect.
     @Throws(OutOfMemoryError::class)
@@ -143,11 +146,15 @@ object BitmapUtils {
         return newDimensions
     }
 
+    /*
+    // Functions are never used
     fun rotate(source: Bitmap, angle: Float): Bitmap {
         val matrix = Matrix()
         matrix.postRotate(angle)
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
+
+
 
     fun flip(source: Bitmap, horizontally: Boolean): Bitmap {
         val matrix = Matrix()
@@ -167,4 +174,6 @@ object BitmapUtils {
         val newWidth = (source.width * ratio).toInt()
         return Bitmap.createScaledBitmap(source, newWidth, newHeight, true)
     }
+
+     */
 }

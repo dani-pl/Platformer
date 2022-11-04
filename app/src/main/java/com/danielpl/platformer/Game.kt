@@ -17,10 +17,8 @@ import com.danielpl.platformer.util.Config.METERS_TO_SHOW_X
 import com.danielpl.platformer.util.Config.METERS_TO_SHOW_Y
 import com.danielpl.platformer.util.Config.NANOS_TO_SECOND
 import com.danielpl.platformer.util.Config.PIXELS_PER_METER
-import com.danielpl.platformer.util.Config.collectedCollectibles
 import com.danielpl.platformer.util.Config.isGameOver
 import com.danielpl.platformer.util.Config.isLevelSuccessful
-import com.danielpl.platformer.util.Config.playerHealth
 import com.danielpl.platformer.util.Config.restart
 import com.danielpl.platformer.util.Config.totalCollectibles
 import com.danielpl.platformer.util.Config.level
@@ -103,8 +101,8 @@ class Game(context: Context, attrs: AttributeSet? = null) : SurfaceView(context,
         jukebox.resumeBgMusic()
         isGameOver = false
         isLevelSuccessful = false
-        playerHealth = 3
-        collectedCollectibles = 0
+        levelManager.player.health = 3
+        levelManager.player.wallet = 0
     }
 
 
@@ -140,7 +138,7 @@ class Game(context: Context, attrs: AttributeSet? = null) : SurfaceView(context,
     }
 
     private fun checkGameOverOrLevelSuccessful() {
-        if (playerHealth < 1) {
+        if (levelManager.player.health < 1) {
             if (!isGameOver) {
                 jukebox.pauseBgMusic()
                 jukebox.play(SFX.death)
@@ -149,7 +147,7 @@ class Game(context: Context, attrs: AttributeSet? = null) : SurfaceView(context,
             }
         }
 
-        if (collectedCollectibles == totalCollectibles) {
+        if (levelManager.player.wallet == totalCollectibles) {
             if (!isLevelSuccessful) {
                 jukebox.pauseBgMusic()
                 jukebox.play(SFX.win)
@@ -175,8 +173,8 @@ class Game(context: Context, attrs: AttributeSet? = null) : SurfaceView(context,
 
         val renderHud = RenderHud(canvas, paint, context)
         if (!isGameOver && !isLevelSuccessful) {
-            renderHud.showHealth(playerHealth, paint)
-            renderHud.showCollectibles(collectedCollectibles, paint, totalCollectibles)
+            renderHud.showHealth(levelManager.player.health, paint)
+            renderHud.showCollectibles(levelManager.player.wallet, paint, totalCollectibles)
         } else {
             renderHud.gameOverOrLevelSuccessful()
         }
